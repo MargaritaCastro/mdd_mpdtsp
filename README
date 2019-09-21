@@ -1,0 +1,69 @@
+###########################
+## README FILE
+###########################
+
+## ---------------------------------------------------
+## -- PART 1 : Using the code
+## ---------------------------------------------------
+
+# -------------------
+# - Requirements
+# -------------------
+
+-  IBM Ilog CPLEX 12.7. The version can be changed inside the makefile. However, there is no guarantee that the code will run properly if either an older or newer version of CPLEX is used.
+
+- C++ boost libraries. The user can download the libraries from the official webpage (https://www.boost.org/).
+
+- [Optional] Frangioni's Bundle method implementation to solve the Lagrangian Dual problem. An alternative is provided to test the code. Read PART 2 for more details.
+
+
+# -------------------
+# - Compiling
+# -------------------
+
+We provide the user with a makefile. The user needs to change the following variables:
+
+- "SYSTEM": her/his operative system.
+- "BASISILOG": the path to the CPLEX library.
+- "BOOSTDIR": the path to the boost libraries.
+
+
+# -------------------
+# - Running the code
+# -------------------
+
+The code is run as: ./mdd_mPDTSP "path_instance" [flags]
+An example is provided in the "test.sh" file.
+
+[flags]
+
+-c1, -c2 and - c3: these flags specify the class of the instance (see our paper). The user needs to specify the correct class to read an instance file since the format for each class is different. Class 1 is set by default. The set of instances used in our paper can be found here: https://hhperez.webs.ull.es/PDsite/index.htm
+
+-d: runs the CPOptimizer search with DepthFirstSearch = TRUE. We recommend using this flag when running our MDD implementation.
+
+-f: flag to use Frangioni's Lagrangian Dual solver. See PART 2 for an explanation of how to activate this functionality.
+
+-lt: runs the MDD-Lagrangian implementation with tour constraints penalties. (*)
+-lc: runs the MDD-Lagrangian implementation with capacity constraints penalties. (*)
+-lp: runs the MDD-Lagrangian implementation with precedence constraints penalties. (*)
+
+(*) You can use one or more of these flags together. However, only the combinations presented in the paper are currently supported.
+
+-o(text): flag to indicate the output file name. 
+
+-rc: Construct an MDD using the capacity expansion strategy (Section 5, Algorithm 2). Our code uses the tour expansion strategy by default. 
+
+-v and -vl: debugging flags. -vl will show all the iterations while solving the Lagrangian Dual.
+
+-w[int]: this flag specifies the width of the MDD, e.g., -w1024 will create an MDD of width 1024. The width is set-up to zero by default. A width less or equal to zero will run our Constraint Programming model instead of the MDD implementation.
+
+
+## ---------------------------------------------------
+## -- PART 2: Bundle method implementation
+## ---------------------------------------------------
+
+The results presented in our paper use the Bundle method implementation by Prof. Antonio Frangioni from Universita di Pisa. However, we cannot provide you with his code for copyright reasons. We encourage the user to contact Prof. Frangioni and ask him directly for his Lagrangian Dual solver.
+
+Once the user obtains Frangioni's code, she/he can test the Lagrangian Dual solver by uncommenting the highlighted sections of our main file (see "src/mPDTSP_MDD.cpp"). We provide the user with the code needed to integrate our MDD implementation with Frangioni's solver (see folder "lagrangian - extra"). We also include file "ParValue.qp" that is required by Frangioni's solver. This last file has all the parameters that we used when running his solver.
+
+Alternatively, we provide the user with our own Bundle method implementation to solve the Lagrangian dual problem. The computational results are similar with either Bundle method implementation. Both codes find the same bounds, but the Lagrange multipliers might be different. Also, Frangioni's implementation is slightly faster with at most a 1-minute speed-up.
